@@ -1,13 +1,8 @@
- # BancoRN
-
-# BancoFácil
-
-## O BANCORN é um Sistema bancário simples uma vez que apresenta apenas 
-## operações básicas 
+# BancoRN
 
 ### Equipe
 - Pablo Gustavo
-- Vladimir Vieira
+- Vladimir Vieira (@VladimirVieira)
 
 ### Stack de desenvolvimento
 - Linguagem: Python
