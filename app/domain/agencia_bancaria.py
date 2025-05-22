@@ -1,30 +1,73 @@
-from decimal import Decimal
+from typing import List, Optional, Tuple
+from conta import Conta
+from erros_except import SaldoError
 
-from .conta import Conta
-from .excecoes import ContaJaExiste, ContaNaoEncontrada, ValorTransferenciaInvalido
+class AgenciaBancaria(object):
 
-class AgenciaBancaria:
     def __init__(self) -> None:
-        self.contas: list[Conta] = []
+        self.contas: List[Conta] = []
 
-    def criar_conta(self, numero: str) -> Conta:
-        if any(c.numero == numero for c in self.contas):
-            raise ContaJaExiste()
-        
-        nova_conta = Conta(numero)
-        self.contas.append(nova_conta)
-        
-        return nova_conta
 
-    def buscar_conta(self, numero: str) -> Conta:
-        for conta in self.contas:
-            if conta.numero == numero:
-                return conta
-        raise ContaNaoEncontrada()
+    def comparaConta(self, testeconta: int) -> bool:
+        for id in self.contas:
+            if id.numero == testeconta:
+                return True
+        return False
+
+    def cadastrarConta(self, numeroConta: int) -> bool:
+        if not self.comparaConta(numeroConta):
+            self.contas.append(Conta(numeroConta))
+            return True
+        return False
+
+
+    def consultarSaldo(self, numeroConta: int) -> Optional[float]:
+        for i in self.contas:
+            if i.numero == numeroConta:
+                return i.verificarSaldo()
+        return None
+
+
+
+    def atualizarCredito(self, numeroConta: int, valor: float) -> bool:
+        for i in self.contas:
+            if i.numero == numeroConta:
+                i.escolherCredito(valor)
+                return True
+        return False
+
     
-    def transferir(self, conta_origem: Conta, conta_destino: Conta, valor: Decimal) -> None:
-        if valor <= 0:
-            raise ValorTransferenciaInvalido
+    def atualizarDebito(self, numeroConta: int, valor: float) -> bool:
+        for i in self.contas:
+            if i.numero == numeroConta:
+                try:
+                     i.escolherDebito(valor)
+                     return True
+                except SaldoError as e:
+                     print(f"{e}")
+                     return False
+        return False
         
-        conta_origem.debitar(valor)
-        conta_destino.creditar(valor)
+    def realizarTransferencia(self, contaorigem: int, contadestino: int, valor: float) -> bool:
+        origem: Optional[Conta] = None
+        destino: Optional[Conta] = None
+
+        for conta in self.contas:
+            if conta.numero == contaorigem:
+                origem = conta
+            elif conta.numero == contadestino:
+                destino = conta
+
+        if origem and destino:
+            try:
+                origem.escolherDebito(valor)
+                destino.escolherCredito(valor)
+                return True
+            except SaldoError as e:
+                    print(f" {e}")
+                    return False
+        return False
+
+ 
+
+ 

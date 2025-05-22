@@ -1,25 +1,22 @@
-from decimal import Decimal
+from erros_except import SaldoError      
 
-class Conta:
-    def __init__(self, numero: str) -> None:
-        self.numero = numero
-        self._saldo = Decimal('0.00')
+class Conta (object):
 
-    def obter_saldo(self) -> Decimal:
-        return self._saldo
+    def __init__(self, numero: int) -> None:
+        self.numero: int = numero
+        self.saldo: float = 0.0
 
-    def creditar(self, valor: Decimal) -> None:
-        self._saldo += valor
+    def verificarSaldo(self) -> float:
+        return self.saldo
 
-    def debitar(self, valor: Decimal) -> None:
-        self._saldo -= valor
+    def escolherCredito(self, valor: float) -> None:
+        self.saldo += valor
 
-    @staticmethod
-    def formatar_saldo(saldo: Decimal) -> str:
-        return f'R$ {saldo:.2f}'
+    def escolherDebito(self, valor: float) -> None:
+        if self.verificarSaldo() >= valor:
+            self.saldo -= valor
+        else:
+            raise SaldoError()
+        
 
-    def __str__(self) -> str:
-        return f'Conta {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}'
-    
-    def __hash__(self) -> int:
-        return hash(self.numero)
+ 
