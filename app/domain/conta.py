@@ -1,4 +1,5 @@
 from decimal import Decimal
+from .excecoes import SaldoInsuficienteError
 
 class Conta:
     def __init__(self, numero: str) -> None:
@@ -12,6 +13,8 @@ class Conta:
         self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
+        if valor > self._saldo:
+            raise SaldoInsuficienteError()
         self._saldo -= valor
 
     @staticmethod
