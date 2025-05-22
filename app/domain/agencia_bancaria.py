@@ -1,7 +1,9 @@
 from decimal import Decimal
 from typing import List
+
 from conta import Conta
-from excecoes import ContaJaExiste, ContaNaoEncontrada, ValorTransferenciaInvalido
+from excecoes import ContaJaExiste, ContaNaoEncontrada
+
 
 class AgenciaBancaria:
     def __init__(self) -> None:
@@ -32,11 +34,9 @@ class AgenciaBancaria:
         conta = self.buscar_conta(numero)
         conta.debitar(valor)
 
-    def transferir(self, origem_numero: str, destino_numero: str, valor: Decimal) -> None:
-        if valor <= 0:
-            raise ValorTransferenciaInvalido()
+    def transferir(
+        self, origem_numero: str, destino_numero: str, valor: Decimal
+    ) -> None:
         conta_origem = self.buscar_conta(origem_numero)
         conta_destino = self.buscar_conta(destino_numero)
-        conta_origem.debitar(valor)
-        conta_destino.creditar(valor)
-
+        conta_origem.transferir(valor, conta_destino)
