@@ -13,3 +13,7 @@ class ValorTransferenciaInvalido(Exception):
 class SaldoInsuficienteError(Exception):
     def __init__(self, mensagem="Erro: Saldo insuficiente para efetuar a operação."):
         super().__init__(mensagem)
+
+class ValorOperacaoInvalido(Exception):
+    def __init__(self, mensagem="Erro: Valor inválido para efetuar a operação."):
+        super().__init__(mensagem)

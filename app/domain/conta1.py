@@ -1,19 +1,18 @@
 from decimal import Decimal
-from .excecoes import SaldoInsuficienteError, ValorOperacaoInvalido
+from .excecoes import SaldoInsuficienteError
 
 class Conta:
     def __init__(self, numero: str) -> None:
         self.numero = numero
         self._saldo = Decimal('0.00')
 
-     def creditar(self, valor: Decimal) -> None:
-        if valor <= 0:
-            raise ValorOperacaoInvalido()
+    def obter_saldo(self) -> Decimal:
+        return self._saldo
+
+    def creditar(self, valor: Decimal) -> None:
         self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
-        if valor <= 0:
-            raise ValorOperacaoInvalido()
         if valor > self._saldo:
             raise SaldoInsuficienteError()
         self._saldo -= valor
