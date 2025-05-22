@@ -10,23 +10,23 @@ class Conta:
 
     def depositar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido()
+            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
         self._saldo += valor
 
     def transferir(self, valor: Decimal, conta: "Conta") -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido()
+            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
         self.debitar(valor)
         conta.creditar(valor)
 
     def creditar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido()
+            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
         self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido()
+            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
         if valor > self._saldo:
             raise SaldoInsuficiente()
         self._saldo -= valor
