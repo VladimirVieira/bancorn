@@ -36,7 +36,7 @@ class Conta:
         return f"R$ {saldo:.2f}"
 
     def __str__(self) -> str:
-        return f"Conta {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
+        return f"Conta Simples {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
 
     def __hash__(self) -> int:
         return hash(self.numero)
