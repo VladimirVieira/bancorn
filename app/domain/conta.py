@@ -1,17 +1,21 @@
 from decimal import Decimal
+from .excecoes import SaldoError
 
 class Conta:
     def __init__(self, numero: str) -> None:
         self.numero = numero
         self._saldo = Decimal('0.00')
 
-    def obter_saldo(self) -> Decimal:
-        return self._saldo
-
-    def creditar(self, valor: Decimal) -> None:
+     def creditar(self, valor: Decimal) -> None:
+        if valor <= 0:
+            raise ValorTransferenciaInvalido()
         self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
+        if valor <= 0:
+            raise ValorTransferenciaInvalido()
+        if valor > self._saldo:
+            raise SaldoError()
         self._saldo -= valor
 
     @staticmethod

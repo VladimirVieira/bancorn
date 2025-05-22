@@ -9,3 +9,7 @@ class ContaNaoEncontrada(Exception):
 class ValorTransferenciaInvalido(Exception):
     def __init__(self, mensagem: str = 'O valor da transferência deve ser maior que zero') -> None:
         super().__init__(mensagem)
+
+class SaldoError(Exception):
+    def __init__(self, mensagem="Erro: Saldo insuficiente para efetuar a operação."):
+        super().__init__(mensagem)
