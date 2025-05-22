@@ -8,7 +8,7 @@ class ContaNaoEncontrada(Exception):
         super().__init__(mensagem)
 
 
-class SaldoInsuficienteError(Exception):
+class SaldoInsuficiente(Exception):
     def __init__(self, mensagem="Saldo insuficiente para efetuar a operação."):
         super().__init__(mensagem)
 

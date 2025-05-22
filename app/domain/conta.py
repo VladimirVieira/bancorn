@@ -8,6 +8,17 @@ class Conta:
         self.numero = numero
         self._saldo = Decimal("0.00")
 
+    def depositar(self, valor: Decimal) -> None:
+        if valor <= 0:
+            raise ValorOperacaoInvalido()
+        self._saldo += valor
+
+    def transferir(self, valor: Decimal, conta: "Conta") -> None:
+        if valor <= 0:
+            raise ValorOperacaoInvalido()
+        self.debitar(valor)
+        conta.creditar(valor)
+
     def creditar(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalido()
