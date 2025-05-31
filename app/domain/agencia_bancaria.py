@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import List
 
+from conta_poupanca import ContaPoupanca
 from conta import Conta
 from excecoes import ContaJaExiste, ContaNaoEncontrada
 
@@ -13,6 +14,13 @@ class AgenciaBancaria:
         if any(c.numero == numero for c in self.contas):
             raise ContaJaExiste()
         nova_conta = Conta(numero)
+        self.contas.append(nova_conta)
+        return nova_conta
+        
+    def criar_conta_poupanca(self, numero: str, saldo_inicial: Decimal) -> ContaPoupanca:
+        if any(c.numero == numero for c in self.contas):
+            raise ContaJaExiste()
+        nova_conta = ContaPoupanca(numero, saldo_inicial)
         self.contas.append(nova_conta)
         return nova_conta
 
