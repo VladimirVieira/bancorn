@@ -9,17 +9,20 @@ from excecoes import ContaJaExiste, ContaNaoEncontrada
 class AgenciaBancaria:
     def __init__(self) -> None:
         self.contas: List[Conta] = []
-
-    def criar_conta(self, numero: str) -> Conta:
+        
+    def verificar_conta(self, numero: str) -> None:
         if any(c.numero == numero for c in self.contas):
             raise ContaJaExiste()
+        return None
+
+    def criar_conta(self, numero: str) -> Conta:
+        self.verificar_conta(numero)
         nova_conta = Conta(numero)
         self.contas.append(nova_conta)
         return nova_conta
         
     def criar_conta_poupanca(self, numero: str, saldo_inicial: Decimal) -> ContaPoupanca:
-        if any(c.numero == numero for c in self.contas):
-            raise ContaJaExiste()
+        self.verificar_conta(numero)
         nova_conta = ContaPoupanca(numero, saldo_inicial)
         self.contas.append(nova_conta)
         return nova_conta
@@ -48,3 +51,4 @@ class AgenciaBancaria:
         conta_origem = self.buscar_conta(origem_numero)
         conta_destino = self.buscar_conta(destino_numero)
         conta_origem.transferir(valor, conta_destino)
+
