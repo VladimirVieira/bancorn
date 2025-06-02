@@ -1,9 +1,11 @@
 from decimal import Decimal
 
-from .excecoes import SaldoInsuficiente, ValorOperacaoInvalido
+from app.domain.excecoes import SaldoInsuficiente, ValorOperacaoInvalido
 
 
 class Conta:
+    SALDO_MINIMO = -Decimal("1000.00")
+
     def __init__(self, numero: str) -> None:
         self.numero = numero
         self._saldo = Decimal("0.00")
@@ -27,7 +29,7 @@ class Conta:
     def debitar(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
-        if valor > self._saldo:
+        if self._saldo - valor < self.SALDO_MINIMO:
             raise SaldoInsuficiente()
         self._saldo -= valor
 
@@ -36,7 +38,9 @@ class Conta:
         return f"R$ {saldo:.2f}"
 
     def __str__(self) -> str:
-        return f"Conta Simples {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
+        return (
+            f"Conta Simples {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
+        )
 
     def __hash__(self) -> int:
         return hash(self.numero)

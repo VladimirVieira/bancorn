@@ -18,6 +18,6 @@ class ValorOperacaoInvalido(Exception):
         super().__init__(mensagem)
 
 
-class VerificarSaldoInicial(Exception):
-    def __init__(self, mensagem: str = "O saldo inicial não foi informado") -> None:
+class SaldoInicialInvalido(Exception):
+    def __init__(self, mensagem: str = "O valor informado para o saldo inicial não é permitido.") -> None:
         super().__init__(mensagem)
