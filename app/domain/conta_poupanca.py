@@ -1,14 +1,16 @@
 from decimal import Decimal
 
-from conta import Conta
+from app.domain.conta import Conta
+from app.domain.excecoes import ValorOperacaoInvalido, SaldoInicialInvalido
 
-from .excecoes import VerificarSaldoInicial, ValorOperacaoInvalido  
 
 class ContaPoupanca(Conta):
+    SALDO_MINIMO = Decimal("0.00")
 
     def __init__(self, numero: str, saldo_inicial: Decimal):
-        if saldo_inicial is None or saldo_inicial < 0:
-            raise VerificarSaldoInicial("O valor do saldo inicial não é permitido")
+        if saldo_inicial < 0:
+            raise SaldoInicialInvalido()
+        
         super().__init__(numero)
         self._saldo = saldo_inicial
 
@@ -23,4 +25,3 @@ class ContaPoupanca(Conta):
         return (
             f"Conta Poupança {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
         )
-

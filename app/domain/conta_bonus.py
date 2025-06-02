@@ -1,9 +1,10 @@
 from decimal import Decimal
 
-from conta import Conta
+from app.domain.conta import Conta
 
 
 class ContaBonus(Conta):
+    SALDO_MINIMO = -Decimal("1000.00")
     VALOR_PARA_PONTOS_DEPOSITO = 100
     VALOR_PARA_PONTOS_TRANSFERENCIA = 200
 
