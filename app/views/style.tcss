@@ -1,0 +1,27 @@
+Screen {
+    align: center middle;
+    width: 50;
+}
+
+Button {
+    width: 100%;
+    border: round cyan;
+    content-align: center middle;
+}
+
+Input, Select {
+    width: 100%;
+    border: round green;
+}
+
+.titulo {
+    text-align: center;
+    margin: 1 0;
+    color: lightgreen;
+    text-style: bold;
+}
+
+
+.voltar {
+    border: round red;
+}
