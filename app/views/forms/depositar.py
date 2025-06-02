@@ -1,16 +1,18 @@
 from textual.screen import Screen
 from textual.app import ComposeResult
 from textual.widgets import Header, Footer, Button, Static, Input
-from textual.containers import Vertical, Horizontal
+from textual.containers import Vertical
 from textual.events import Ready
+
+from app.views.componentes.input_dinheiro import DinheiroInput
 
 class TelaDepositar(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Vertical(
-            Static("[b green]Depósito[/b green]"),
+            Static("Depósito", classes="titulo"),
             Static("Digite o valor a ser depositado:"),
-            Input(placeholder="Valor", id="valor"),
+            DinheiroInput(placeholder="Valor", id="valor"),
             Button("Confirmar", id="confirmar"),
             Button("Voltar", id="voltar", classes="voltar"),
         )

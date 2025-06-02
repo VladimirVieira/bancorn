@@ -3,14 +3,16 @@ from textual.containers import Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Input, Static
 
+from app.views.componentes.input_dinheiro import DinheiroInput
+
 
 class TelaSacar(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Vertical(
-            Static("[b green]Saque[/b green]", id="titulo"),
+            Static("Saque", classes="titulo"),
             Static("Digite o valor a ser sacado:", id="instrucoes"),
-            Input(placeholder="Valor", id="valor"),
+            DinheiroInput(placeholder="Valor", id="valor"),
             Button("Confirmar", id="confirmar"),
             Button("Voltar", id="voltar", classes="voltar"),
             id="form_sacar",

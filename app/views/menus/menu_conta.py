@@ -3,39 +3,16 @@ from textual.containers import Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Static
 
-from .depositar import TelaDepositar
-from .sacar import TelaSacar
-from .transferir import TelaTransferir
+from app.views.forms.depositar import TelaDepositar
+from app.views.forms.sacar import TelaSacar
+from app.views.forms.transferir import TelaTransferir
 
 
-class TelaConta(Screen):
-    CSS = """
-    #painel_conta {
-        align: center middle;
-        width: 40;
-    }
-
-    #titulo_conta {
-        content-align: center middle;
-        margin-bottom: 1;
-    }
-
-    #saldo {
-        content-align: center middle;
-        margin-bottom: 2;
-    }
-
-    Button {
-        width: 100%;
-        border: round cyan;
-        content-align: center middle;
-    }
-    """
-
+class MenuConta(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Vertical(
-            Static("[b green]Conta 1234[/b green]", id="titulo_conta"),
+            Static("Conta 123456-78", classes="titulo"),
             Static("[b]Saldo:[/b] R$ 1.500,75", id="saldo"),
             Button("Depositar", id="depositar"),
             Button("Sacar", id="sacar"),

@@ -3,16 +3,18 @@ from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Input, Static
 
+from app.views.componentes.input_dinheiro import DinheiroInput
+
 
 class TelaTransferir(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Vertical(
-            Static("[b green]Transferência[/b green]", id="titulo"),
+            Static("Transferência", classes="titulo"),
             Static("Digite o número da conta destino:", id="instr_conta"),
             Input(placeholder="Número da conta", id="conta_destino"),
             Static("Digite o valor a ser transferido:", id="instr_valor"),
-            Input(placeholder="Valor", id="valor"),
+            DinheiroInput(placeholder="Valor", id="valor"),
             Button("Confirmar", id="confirmar"),
             Button("Voltar", id="voltar", classes="voltar"),
             id="form_transferir",
