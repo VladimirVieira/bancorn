@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "bancorn"
+version = "1.3.0"
+description = "Sistema bancario ficticio para a disciplina de Gerencia de Configuracao e Mudancas"
+authors = ["Pablo Gustavo Fernandes Maia <pablo1gustavo.dev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+textual-dev = "^1.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
