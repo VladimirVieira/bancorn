@@ -17,3 +17,7 @@ class SaldoInsuficienteError(Exception):
 class ValorOperacaoInvalido(Exception):
     def __init__(self, mensagem="Erro: Valor inválido para efetuar a operação."):
         super().__init__(mensagem)
+
+class SaldoInicialInvalido(Exception):
+    def __init__(self, mensagem: str = "O valor informado para o saldo inicial não é permitido.") -> None:
+        super().__init__(mensagem)

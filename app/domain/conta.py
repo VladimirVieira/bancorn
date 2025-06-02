@@ -1,12 +1,21 @@
 from decimal import Decimal
-from .excecoes import SaldoInsuficienteError, ValorOperacaoInvalido
+
+from .excecoes import (
+    SaldoInicialInvalido,
+    SaldoInsuficienteError,
+    ValorOperacaoInvalido,
+)
+
 
 class Conta:
-    def __init__(self, numero: str) -> None:
-        self.numero = numero
-        self._saldo = Decimal('0.00')
+    def __init__(self, numero: str, saldo_inicial: Decimal) -> None:
+        if saldo_inicial < 0:
+            raise SaldoInicialInvalido()
 
-     def creditar(self, valor: Decimal) -> None:
+        self.numero = numero
+        self._saldo = saldo_inicial
+
+    def creditar(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalido()
         self._saldo += valor
@@ -20,10 +29,10 @@ class Conta:
 
     @staticmethod
     def formatar_saldo(saldo: Decimal) -> str:
-        return f'R$ {saldo:.2f}'
+        return f"R$ {saldo:.2f}"
 
     def __str__(self) -> str:
-        return f'Conta {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}'
-    
+        return f"Conta {self.numero} - Saldo: {self.formatar_saldo(self._saldo)}"
+
     def __hash__(self) -> int:
         return hash(self.numero)
