@@ -2,7 +2,7 @@
 name = "bancorn"
 version = "1.3.0"
 description = "Sistema bancario ficticio para a disciplina de Gerencia de Configuracao e Mudancas"
-authors = ["Pablo Gustavo Fernandes Maia <pablo1gustavo.dev@gmail.com>"]
+authors = ["Pablo Gustavo Fernandes Maia <pablo1gustavo.dev@gmail.com>", "Vladimir Vieira do Nascimento <vlad_nascimento_@hotmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
