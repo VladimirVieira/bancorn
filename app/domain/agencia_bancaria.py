@@ -13,7 +13,6 @@ class AgenciaBancaria:
     def verificar_conta(self, numero: str) -> None:
         if any(c.numero == numero for c in self.contas):
             raise ContaJaExiste()
-        return None
 
     def criar_conta_poupanca(
         self, numero: str, saldo_inicial: Decimal
@@ -22,12 +21,11 @@ class AgenciaBancaria:
         nova_conta = ContaPoupanca(numero, saldo_inicial)
         self.contas.append(nova_conta)
 
-        
     def criar_conta_simples(self, numero: str, saldo_inicial: Decimal) -> Conta:
         self.verificar_conta(numero)
         nova_conta = Conta(numero, saldo_inicial)
         self.contas.append(nova_conta)
-        
+
         return nova_conta
 
     def buscar_conta(self, numero: str) -> Conta:
