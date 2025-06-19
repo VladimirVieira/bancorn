@@ -1,10 +1,28 @@
+from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
 
 from app.domain.excecoes import (
     SaldoInicialInvalido,
     SaldoInsuficiente,
     ValorOperacaoInvalido,
 )
+
+
+class TipoOperacao(StrEnum):
+    DEPOSITO = "deposito"
+    SAQUE = "saque"
+    TRANSFERENCIA = "transferencia"
+    CONSULTA_SALDO = "consulta_saldo"
+    RENDIMENTO = "rendimento"
+
+
+@dataclass
+class Operacao:
+    tipo: TipoOperacao
+    valor: Decimal
+    origem: str
+    destino: str | None
 
 
 class Conta:
@@ -43,6 +61,7 @@ class Conta:
     def creditar(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+        self._saldo += valor
 
     @staticmethod
     def formatar_saldo(saldo: Decimal) -> str:
