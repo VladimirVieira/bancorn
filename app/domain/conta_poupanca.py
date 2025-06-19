@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from app.domain.conta import Conta
-from app.domain.excecoes import ValorOperacaoInvalido, SaldoInicialInvalido
+from app.domain.excecoes import SaldoInicialInvalido, ValorOperacaoInvalido
 
 
 class ContaPoupanca(Conta):
@@ -10,8 +10,7 @@ class ContaPoupanca(Conta):
     def __init__(self, numero: str, saldo_inicial: Decimal):
         if saldo_inicial < 0:
             raise SaldoInicialInvalido()
-        
-        super().__init__(numero)
+        super().__init__(numero, saldo_inicial)
         self._saldo = saldo_inicial
 
     def render_juros(self, taxa_percentual: Decimal) -> None:

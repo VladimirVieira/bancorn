@@ -8,6 +8,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.13"
 textual-dev = "^1.7.0"
+psycopg2 = "^2.9.10"
+python-dotenv = "^1.1.0"
+pydantic = "^2.11.7"
+pydantic-settings = "^2.9.1"
+yoyo-migrations = "^9.0.0"
+fastapi = "^0.115.13"
+pytest = "^8.4.1"
 
 
 [build-system]

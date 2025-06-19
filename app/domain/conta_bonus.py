@@ -9,8 +9,8 @@ class ContaBonus(Conta):
     VALOR_PARA_PONTOS_TRANSFERENCIA_ENVIADA = 200
     VALOR_PARA_PONTOS_TRANSFERENCIA_RECEBIDA = 150
 
-    def __init__(self, numero: str) -> None:
-        super().__init__(numero)
+    def __init__(self, numero: str, saldo_inicial: Decimal = Decimal("0.00")) -> None:
+        super().__init__(numero, saldo_inicial)
         self._pontuacao = 10
 
     def obter_pontuacao(self) -> int:

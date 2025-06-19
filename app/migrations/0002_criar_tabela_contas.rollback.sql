@@ -1,0 +1,2 @@
+DROP IF EXISTS TABLE contas;
+DROP IF EXISTS TYPE tipo_conta;
