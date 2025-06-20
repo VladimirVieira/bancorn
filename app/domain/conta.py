@@ -31,7 +31,6 @@ class Conta:
     def __init__(self, numero: str, saldo_inicial: Decimal) -> None:
         if saldo_inicial < 0:
             raise SaldoInicialInvalido()
-
         self.numero = numero
         self._saldo = saldo_inicial
 
@@ -62,6 +61,7 @@ class Conta:
         if valor <= 0:
             raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
         self._saldo += valor
+
 
     @staticmethod
     def formatar_saldo(saldo: Decimal) -> str:

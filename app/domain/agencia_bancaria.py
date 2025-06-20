@@ -20,13 +20,14 @@ class AgenciaBancaria:
         self.verificar_conta(numero)
         nova_conta = ContaPoupanca(numero, saldo_inicial)
         self.contas.append(nova_conta)
+        
 
     def criar_conta_simples(self, numero: str, saldo_inicial: Decimal) -> Conta:
         self.verificar_conta(numero)
         nova_conta = Conta(numero, saldo_inicial)
         self.contas.append(nova_conta)
-
         return nova_conta
+      
 
     def buscar_conta(self, numero: str) -> Conta:
         for conta in self.contas:

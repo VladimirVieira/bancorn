@@ -8,10 +8,8 @@ class ContaPoupanca(Conta):
     SALDO_MINIMO = Decimal("0.00")
 
     def __init__(self, numero: str, saldo_inicial: Decimal):
-        if saldo_inicial < 0:
-            raise SaldoInicialInvalido()
         super().__init__(numero, saldo_inicial)
-        self._saldo = saldo_inicial
+
 
     def render_juros(self, taxa_percentual: Decimal) -> None:
         if taxa_percentual <= 0 or taxa_percentual > 100:
