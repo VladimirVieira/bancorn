@@ -1,0 +1,53 @@
+name: CI - Dev Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONUNBUFFERED: 1
+      POETRY_VIRTUALENVS_CREATE: false
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Instalar Poetry
+        run: |
+          pip install poetry==1.8.4
+          poetry config virtualenvs.create false
+
+      - name: Instalar dependências com Poetry
+        run: poetry install --with dev
+
+      - name: Análise com Ruff
+        run: poetry run ruff check .
+
+      - name: Análise com MyPy
+        run: poetry run mypy .
+
+      - name: Testes com Pytest
+        run: poetry run pytest
+
+      - name: Criar tag build com timestamp
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          TIMESTAMP=$(date -u +'%Y%m%d%H%M%S')
+          TAG="build-${TIMESTAMP}"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag "$TAG"
+          git push origin "$TAG"

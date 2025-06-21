@@ -1,6 +1,27 @@
 version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: dev_app
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PYTHONUNBUFFERED: 1
+      POETRY_VIRTUALENVS_CREATE: false
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
   postgres:
     image: postgres:17
     container_name: dev_postgres
