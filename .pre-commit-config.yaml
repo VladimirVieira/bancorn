@@ -1,0 +1,37 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff (linter)
+        entry: poetry run ruff check --fix
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: ruff-format
+        name: ruff (formatter)
+        entry: poetry run ruff format
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: mypy
+        name: mypy (type checker)
+        entry: poetry run mypy
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: pytest
+        name: pytest (run tests)
+        entry: poetry run pytest
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: conventional-pre-commit
+        name: conventional commit message
+        entry: poetry run conventional-pre-commit
+        language: system
+        stages: [commit-msg]
+        pass_filenames: true

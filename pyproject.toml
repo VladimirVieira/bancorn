@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "bancorn"
+version = "1.3.0"
+description = "Sistema bancario ficticio para a disciplina de Gerencia de Configuracao e Mudancas"
+authors = ["Pablo Gustavo Fernandes Maia <pablo1gustavo.dev@gmail.com>", "Vladimir Vieira do Nascimento <vlad_nascimento_@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+textual-dev = "^1.7.0"
+psycopg2 = "^2.9.10"
+python-dotenv = "^1.1.0"
+pydantic = "^2.11.7"
+pydantic-settings = "^2.9.1"
+yoyo-migrations = "^9.0.0"
+fastapi = "^0.115.13"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+mypy = "^1.16.1"
+types-psycopg2 = "^2.9.21.20250516"
+ruff = "^0.12.0"
+pre-commit = "^4.2.0"
+conventional-pre-commit = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+show_error_codes = true
+warn_unused_ignores = true
+warn_unreachable = true
+exclude = '^(tests|views)/'
+
+[tool.ruff]
+src = ["."]
+target-version = "py313"
+exclude=["views", "tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "D",
+  "TRY003",
+  "TRY300",
+  "EM101",
+  "BLE001",
+  "B904",
+  "UP040",
+  "EM102",
+]
