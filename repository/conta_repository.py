@@ -5,20 +5,19 @@ from config.database import obter_conexao_banco
 from domain.conta import Conta
 from domain.conta_bonus import ContaBonus
 from domain.conta_poupanca import ContaPoupanca
-from domain.excecoes import ContaNaoEncontrada
 from repository.conta_repository_interface import ContaRepositoryInterface
 
-TuplaConta: TypeAlias = tuple[str, str, Decimal, str, int]
+TuplaConta: TypeAlias = tuple[str, Decimal, str, int]
 
 
 def obter_tipo_conta(conta: Conta) -> str:
     match conta:
-        case Conta():
-            return "corrente"
         case ContaPoupanca():
             return "poupanca"
         case ContaBonus():
             return "bonus"
+        case _:
+            return "corrente"
 
 
 class ContaRepository(ContaRepositoryInterface):
@@ -56,13 +55,13 @@ class ContaRepository(ContaRepositoryInterface):
                     ),
                 )
 
-    def listar_contas(self) -> list[Conta]:
+    def listar_contas(self) -> list[str]:
         with obter_conexao_banco() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT numero, saldo, tipo, pontos FROM contas")
-                contas: list[TuplaConta] = cursor.fetchall()
+                cursor.execute("SELECT numero pontos FROM contas")
+                numeros_conta: list[tuple[str]] = cursor.fetchall()
 
-        return [self._mapear_conta(c) for c in contas]
+        return [conta[0] for conta in numeros_conta]
 
     def obter_conta(self, numero: str) -> Conta:
         with obter_conexao_banco() as conn:
@@ -71,10 +70,12 @@ class ContaRepository(ContaRepositoryInterface):
                     "SELECT numero, saldo, tipo, pontos FROM contas WHERE numero = %s",
                     (numero,),
                 )
-                conta: TuplaConta = cursor.fetchone()
+                result = cursor.fetchone()
 
-        if not conta:
-            raise ContaNaoEncontrada()
+        if not result:
+            raise ValueError(f"Conta com número {numero} não encontrada.")
+
+        conta: TuplaConta = result
 
         return self._mapear_conta(conta)
 
