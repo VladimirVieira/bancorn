@@ -44,10 +44,13 @@ jobs:
 
       - name: Criar tag build com timestamp
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           TIMESTAMP=$(date -u +'%Y%m%d%H%M%S')
           TAG="build-${TIMESTAMP}"
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag "$TAG"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VladimirVieira/bancorn.git
           git push origin "$TAG"
