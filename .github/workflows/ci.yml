@@ -8,6 +8,9 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: write
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -15,6 +18,7 @@ jobs:
     env:
       PYTHONUNBUFFERED: 1
       POETRY_VIRTUALENVS_CREATE: false
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout código
@@ -44,8 +48,6 @@ jobs:
 
       - name: Criar tag build com timestamp
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           TIMESTAMP=$(date -u +'%Y%m%d%H%M%S')
           TAG="build-${TIMESTAMP}"
