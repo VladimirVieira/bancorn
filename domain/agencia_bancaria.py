@@ -14,7 +14,9 @@ class AgenciaBancaria:
             raise ContaJaExisteError
 
     def criar_conta_poupanca(
-        self, numero: str, saldo_inicial: Decimal,
+        self,
+        numero: str,
+        saldo_inicial: Decimal,
     ) -> ContaPoupanca:
         self.verificar_conta(numero)
         nova_conta = ContaPoupanca(numero, saldo_inicial)
@@ -47,7 +49,10 @@ class AgenciaBancaria:
         conta.debitar(valor)
 
     def transferir(
-        self, origem_numero: str, destino_numero: str, valor: Decimal,
+        self,
+        origem_numero: str,
+        destino_numero: str,
+        valor: Decimal,
     ) -> None:
         conta_origem = self.buscar_conta(origem_numero)
         conta_destino = self.buscar_conta(destino_numero)

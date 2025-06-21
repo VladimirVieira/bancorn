@@ -14,7 +14,8 @@ from service.conta_service import ContaService
 
 router = APIRouter()
 conta_service = ContaService(
-    conta_repo=ContaRepository(), operacao_repo=OperacaoRepository(),
+    conta_repo=ContaRepository(),
+    operacao_repo=OperacaoRepository(),
 )
 
 

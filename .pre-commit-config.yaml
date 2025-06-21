@@ -17,7 +17,7 @@ repos:
 
       - id: mypy
         name: mypy (type checker)
-        entry: poetry run mypy
+        entry: poetry run mypy .
         language: system
         types: [python]
         pass_filenames: false

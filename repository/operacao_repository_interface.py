@@ -7,6 +7,10 @@ from domain.conta import Conta, TipoOperacao
 class OperacaoRepositoryInterface(ABC):
     @abstractmethod
     def cadastrar_operacao(
-        self, origem: Conta, destino: Conta | None, valor: Decimal, tipo: TipoOperacao,
+        self,
+        origem: Conta,
+        destino: Conta | None,
+        valor: Decimal,
+        tipo: TipoOperacao,
     ) -> None:
         pass

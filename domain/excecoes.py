@@ -10,20 +10,23 @@ class ContaNaoEncontradaError(Exception):
 
 class SaldoInsuficienteError(Exception):
     def __init__(
-        self, mensagem: str = "Saldo insuficiente para efetuar a operação.",
+        self,
+        mensagem: str = "Saldo insuficiente para efetuar a operação.",
     ) -> None:
         super().__init__(mensagem)
 
 
 class ValorOperacaoInvalidoError(Exception):
     def __init__(
-        self, mensagem: str = "Valor inválido para efetuar a operação.",
+        self,
+        mensagem: str = "Valor inválido para efetuar a operação.",
     ) -> None:
         super().__init__(mensagem)
 
 
 class SaldoInicialInvalidoError(Exception):
     def __init__(
-        self, mensagem: str = "O valor informado para o saldo inicial não é permitido.",
+        self,
+        mensagem: str = "O valor informado para o saldo inicial não é permitido.",
     ) -> None:
         super().__init__(mensagem)
