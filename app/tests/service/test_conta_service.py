@@ -5,10 +5,11 @@ import pytest
 from app.domain.conta import Conta
 from app.domain.conta_bonus import ContaBonus
 from app.domain.conta_poupanca import ContaPoupanca
+from app.domain.excecoes import SaldoInsuficiente, ValorOperacaoInvalido
 from app.dto.conta_dto import (
     CadastrarContaDTO,
-    CreditarDebitarDTO,
     RenderJurosDTO,
+    SacarDepositarDTO,
     TipoConta,
     TransferirDTO,
 )
@@ -24,48 +25,20 @@ def conta_service():
     return ContaService(conta_repo, operacao_repo)
 
 
-# Testes para Cadastrar Conta
-
-
-def test_cadastrar_conta_corrente(conta_service):
+def test_cadastrar_corrente_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123456789012", saldo_inicial=Decimal("500.00"), tipo=TipoConta.CORRENTE
     )
     conta_service.cadastrar_conta(dados)
-    assert conta_service.conta_repo.obter_conta("123456789012")._saldo == Decimal(
-        "500.00"
-    )
-
-
-def test_cadastrar_conta_poupanca(conta_service):
-    dados = CadastrarContaDTO(
-        numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
-    )
-    conta_service.cadastrar_conta(dados)
-    assert conta_service.conta_repo.obter_conta("123")._saldo == Decimal("100.00")
-
-
-def test_cadastrar_conta_bonus(conta_service):
-    dados = CadastrarContaDTO(
-        numero="456", saldo_inicial=Decimal("0.00"), tipo=TipoConta.BONUS
-    )
-    conta_service.cadastrar_conta(dados)
-    assert conta_service.conta_repo.obter_conta("456")._saldo == Decimal("0.00")
-
-
-# Testes para Consultar Conta
-def test_consultar_conta_corrente(conta_service):
-    dados = CadastrarContaDTO(
-        numero="123456789014", saldo_inicial=Decimal("300.00"), tipo=TipoConta.CORRENTE
-    )
-    conta_service.cadastrar_conta(dados)
-    conta = conta_service.consultar_conta("123456789014")
+    conta = conta_service.consultar_conta("123456789012")
 
     assert isinstance(conta, Conta)
-    assert conta._saldo == Decimal("300.00")
+    assert not isinstance(conta, ContaPoupanca)
+    assert not isinstance(conta, ContaBonus)
+    assert conta._saldo == Decimal("500.00")
 
 
-def test_consultar_conta_poupanca(conta_service):
+def test_cadastrar_poupanca_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
     )
@@ -76,7 +49,41 @@ def test_consultar_conta_poupanca(conta_service):
     assert conta._saldo == Decimal("100.00")
 
 
-def test_consultar_conta_bonus(conta_service):
+def test_cadastrar_bonus_com_sucesso(conta_service):
+    dados = CadastrarContaDTO(
+        numero="456", saldo_inicial=Decimal("0.00"), tipo=TipoConta.BONUS
+    )
+    conta_service.cadastrar_conta(dados)
+    conta = conta_service.consultar_conta("456")
+
+    assert isinstance(conta, ContaBonus)
+    assert conta._saldo == Decimal("0.00")
+    assert conta._pontuacao == 10
+
+
+def test_consultar_corrente_com_sucesso(conta_service):
+    dados = CadastrarContaDTO(
+        numero="123456789014", saldo_inicial=Decimal("300.00"), tipo=TipoConta.CORRENTE
+    )
+    conta_service.cadastrar_conta(dados)
+    conta = conta_service.consultar_conta("123456789014")
+
+    assert isinstance(conta, Conta)
+    assert conta._saldo == Decimal("300.00")
+
+
+def test_consultar_poupanca_com_sucesso(conta_service):
+    dados = CadastrarContaDTO(
+        numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
+    )
+    conta_service.cadastrar_conta(dados)
+    conta = conta_service.consultar_conta("123")
+
+    assert isinstance(conta, ContaPoupanca)
+    assert conta._saldo == Decimal("100.00")
+
+
+def test_consultar_bonus_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="456", saldo_inicial=Decimal("0.00"), tipo=TipoConta.BONUS
     )
@@ -88,90 +95,148 @@ def test_consultar_conta_bonus(conta_service):
     assert conta._pontuacao == 10
 
 
-# Testes para Crédito
-def test_creditar_valor_normal(conta_service):
+def test_depositar_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
     )
     conta_service.cadastrar_conta(dados)
-    creditar_dados = CreditarDebitarDTO(numero="123", valor=Decimal("50.00"))
-    conta_service.creditar(creditar_dados)
+    creditar_dados = SacarDepositarDTO(numero="123", valor=Decimal("50.00"))
+    conta_service.depositar(creditar_dados)
 
     assert conta_service.consultar_conta("123")._saldo == Decimal("150.00")
 
 
-def test_creditar_valor_negativo(conta_service):
+def test_depositar_em_bonus_com_sucesso(conta_service):
+    dados = CadastrarContaDTO(
+        numero="789", saldo_inicial=Decimal("200.00"), tipo=TipoConta.BONUS
+    )
+    conta_service.cadastrar_conta(dados)
+    depositar_dados = SacarDepositarDTO(numero="789", valor=Decimal("1050.00"))
+    conta_service.depositar(depositar_dados)
+
+    conta = conta_service.consultar_conta("789")
+
+    assert conta._saldo == Decimal("1250.00")
+    assert conta._pontuacao == 20
+
+
+def test_depositar_valor_negativo_com_erro(conta_service):
     dados = CadastrarContaDTO(
         numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
     )
     conta_service.cadastrar_conta(dados)
-    creditar_dados = CreditarDebitarDTO(numero="123", valor=Decimal("-50.00"))
-    with pytest.raises(Exception):
-        conta_service.creditar(creditar_dados)
+    creditar_dados = SacarDepositarDTO(numero="123", valor=Decimal("-50.00"))
+    with pytest.raises(ValorOperacaoInvalido):
+        conta_service.depositar(creditar_dados)
 
 
-def test_credito_normal(conta_service):
+def test_creditar_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123456789017", saldo_inicial=Decimal("600.00"), tipo=TipoConta.CORRENTE
     )
     conta_service.cadastrar_conta(dados)
-    credito_dto = CreditarDebitarDTO(numero="123456789017", valor=Decimal("100.00"))
-    conta_service.creditar(credito_dto)
+    credito_dto = SacarDepositarDTO(numero="123456789017", valor=Decimal("100.00"))
+    conta_service.depositar(credito_dto)
     assert conta_service.consultar_conta("123456789017")._saldo == Decimal("700.00")
 
 
-def test_debitar_valor_negativo(conta_service):
-    dados = CadastrarContaDTO(
-        numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
-    )
-    conta_service.cadastrar_conta(dados)
-    debitar_dados = CreditarDebitarDTO(numero="123", valor=Decimal("-50.00"))
-    with pytest.raises(Exception):
-        conta_service.debitar(debitar_dados)
-
-
-def test_debitar_saldo_insuficiente(conta_service):
-    dados = CadastrarContaDTO(
-        numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
-    )
-    conta_service.cadastrar_conta(dados)
-    debitar_dados = CreditarDebitarDTO(numero="123", valor=Decimal("150.00"))
-    with pytest.raises(Exception):
-        conta_service.debitar(debitar_dados)
-
-
-def test_debito_normal(conta_service):
+def test_sacar_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123456789020", saldo_inicial=Decimal("900.00"), tipo=TipoConta.CORRENTE
     )
     conta_service.cadastrar_conta(dados)
-    debito_dto = CreditarDebitarDTO(numero="123456789020", valor=Decimal("100.00"))
-    conta_service.debitar(debito_dto)
+    debito_dto = SacarDepositarDTO(numero="123456789020", valor=Decimal("100.00"))
+    conta_service.sacar(debito_dto)
     assert conta_service.consultar_conta("123456789020")._saldo == Decimal("800.00")
 
 
-def test_debito_valor_negativo(conta_service):
+def test_sacar_valor_negativo_com_erro(conta_service):
     dados = CadastrarContaDTO(
         numero="123456789021", saldo_inicial=Decimal("1000.00"), tipo=TipoConta.CORRENTE
     )
     conta_service.cadastrar_conta(dados)
-    debito_dto = CreditarDebitarDTO(numero="123456789021", valor=Decimal("-100.00"))
-    with pytest.raises(ValueError):
-        conta_service.debitar(debito_dto)
+    debito_dto = SacarDepositarDTO(numero="123456789021", valor=Decimal("-100.00"))
+    with pytest.raises(ValorOperacaoInvalido):
+        conta_service.sacar(debito_dto)
 
 
-def test_debito_saldo_negativo(conta_service):
+def test_sacar_valor_permitindo_saldo_minimo_em_conta_corrente_com_sucesso(
+    conta_service,
+):
+    dados = CadastrarContaDTO(
+        numero="123456789022", saldo_inicial=Decimal("100.00"), tipo=TipoConta.CORRENTE
+    )
+    conta_service.cadastrar_conta(dados)
+    debito_dto = SacarDepositarDTO(numero="123456789022", valor=Decimal("150.00"))
+    conta_service.sacar(debito_dto)
+
+    assert conta_service.consultar_conta("123456789022")._saldo == Decimal("-50.00")
+
+
+def test_sacar_valor_permitindo_saldo_minimo_em_conta_bonus_com_sucesso(conta_service):
+    dados = CadastrarContaDTO(
+        numero="123456789022", saldo_inicial=Decimal("100.00"), tipo=TipoConta.BONUS
+    )
+    conta_service.cadastrar_conta(dados)
+    debito_dto = SacarDepositarDTO(numero="123456789022", valor=Decimal("150.00"))
+    conta_service.sacar(debito_dto)
+
+    assert conta_service.consultar_conta("123456789022")._saldo == Decimal("-50.00")
+
+
+def test_sacar_valor_permitindo_saldo_minimo_em_conta_poupanca_com_sucesso(
+    conta_service,
+):
+    dados = CadastrarContaDTO(
+        numero="123456789022", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
+    )
+    conta_service.cadastrar_conta(dados)
+    debito_dto = SacarDepositarDTO(numero="123456789022", valor=Decimal("100.00"))
+    conta_service.sacar(debito_dto)
+
+    assert conta_service.consultar_conta("123456789022")._saldo == Decimal("0.00")
+
+
+def test_sacar_valor_com_saldo_menor_que_o_minimo_em_conta_corrente_com_erro(
+    conta_service,
+):
     dados = CadastrarContaDTO(
         numero="123456789022", saldo_inicial=Decimal("50.00"), tipo=TipoConta.CORRENTE
     )
     conta_service.cadastrar_conta(dados)
-    debito_dto = CreditarDebitarDTO(numero="123456789022", valor=Decimal("100.00"))
-    with pytest.raises(ValueError):
-        conta_service.debitar(debito_dto)
+    debito_dto = SacarDepositarDTO(numero="123456789022", valor=Decimal("1100.00"))
+
+    with pytest.raises(SaldoInsuficiente):
+        conta_service.sacar(debito_dto)
 
 
-# Testes para Transferência
-def test_transferir_valor_negativo(conta_service):
+def test_sacar_valor_com_saldo_menor_que_o_minimo_em_conta_bonus_com_erro(
+    conta_service,
+):
+    dados = CadastrarContaDTO(
+        numero="123456789022", saldo_inicial=Decimal("50.00"), tipo=TipoConta.BONUS
+    )
+    conta_service.cadastrar_conta(dados)
+    debito_dto = SacarDepositarDTO(numero="123456789022", valor=Decimal("1100.00"))
+
+    with pytest.raises(SaldoInsuficiente):
+        conta_service.sacar(debito_dto)
+
+
+def test_sacar_valor_com_saldo_menor_que_o_minimo_em_conta_poupanca_com_erro(
+    conta_service,
+):
+    dados = CadastrarContaDTO(
+        numero="123456789022", saldo_inicial=Decimal("50.00"), tipo=TipoConta.POUPANCA
+    )
+    conta_service.cadastrar_conta(dados)
+    sacar = SacarDepositarDTO(numero="123456789022", valor=Decimal("150.00"))
+
+    with pytest.raises(SaldoInsuficiente):
+        conta_service.sacar(sacar)
+
+
+def test_transferir_valor_negativo_com_erro(conta_service):
     dados_origem = CadastrarContaDTO(
         numero="123456789023", saldo_inicial=Decimal("1000.00"), tipo=TipoConta.CORRENTE
     )
@@ -183,11 +248,11 @@ def test_transferir_valor_negativo(conta_service):
     transferir_dados = TransferirDTO(
         origem="123456789023", destino="123456789024", valor=Decimal("-100.00")
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValorOperacaoInvalido):
         conta_service.transferir(transferir_dados)
 
 
-def test_transferir_saldo_insuficiente(conta_service):
+def test_transferir_saldo_insuficiente_com_erro(conta_service):
     dados_origem = CadastrarContaDTO(
         numero="123456789025", saldo_inicial=Decimal("50.00"), tipo=TipoConta.CORRENTE
     )
@@ -197,13 +262,13 @@ def test_transferir_saldo_insuficiente(conta_service):
     conta_service.cadastrar_conta(dados_origem)
     conta_service.cadastrar_conta(dados_destino)
     transferir_dados = TransferirDTO(
-        origem="123456789025", destino="123456789026", valor=Decimal("100.00")
+        origem="123456789025", destino="123456789026", valor=Decimal("2000.00")
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(SaldoInsuficiente):
         conta_service.transferir(transferir_dados)
 
 
-def test_transferencia_entre_contas_bonus(conta_service):
+def test_transferir_entre_bonus_com_sucesso(conta_service):
     dados_origem = CadastrarContaDTO(
         numero="123456789027", saldo_inicial=Decimal("1000.00"), tipo=TipoConta.BONUS
     )
@@ -228,24 +293,13 @@ def test_transferencia_entre_contas_bonus(conta_service):
     assert conta_destino._pontuacao == 13
 
 
-# Testes para Render Juros
-def test_render_juros_poupanca(conta_service):
+def test_render_juros_poupanca_com_sucesso(conta_service):
     dados = CadastrarContaDTO(
         numero="123", saldo_inicial=Decimal("100.00"), tipo=TipoConta.POUPANCA
     )
     conta_service.cadastrar_conta(dados)
     render_dados = RenderJurosDTO(numero="123", taxa_percentual=Decimal("5.00"))
     conta_service.render_juros(render_dados)
-    assert conta_service.consultar_conta("123")._saldo == Decimal("105.00")
+    conta = conta_service.consultar_conta("123")
 
-
-def test_render_juros(conta_service):
-    dados = CadastrarContaDTO(
-        numero="123456789029", saldo_inicial=Decimal("1000.00"), tipo=TipoConta.POUPANCA
-    )
-    conta_service.cadastrar_conta(dados)
-    render_juros_dto = RenderJurosDTO(
-        numero="123456789029", taxa_percentual=Decimal("5.00")
-    )
-    conta_service.render_juros(render_juros_dto)
-    assert conta_service.consultar_conta("123456789029")._saldo == Decimal("1050.00")
+    assert conta._saldo == Decimal("105.00")

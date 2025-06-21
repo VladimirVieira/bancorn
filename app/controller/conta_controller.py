@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.dto.conta_dto import (
     CadastrarContaDTO,
-    CreditarDebitarDTO,
+    SacarDepositarDTO,
     RenderJurosDTO,
     TransferirDTO,
 )
@@ -44,18 +44,18 @@ def consultar_saldo(numero: str):
 
 
 @router.put("/banco/conta/{numero}/credito")
-def credito(numero: str, dados: CreditarDebitarDTO):
+def credito(numero: str, dados: SacarDepositarDTO):
     try:
-        conta_service.creditar(numero, dados)
+        conta_service.depositar(numero, dados)
         return {"message": "Crédito realizado com sucesso."}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.put("/banco/conta/{numero}/debito")
-def debito(numero: str, dados: CreditarDebitarDTO):
+def debito(numero: str, dados: SacarDepositarDTO):
     try:
-        conta_service.debitar(numero, dados)
+        conta_service.sacar(numero, dados)
         return {"message": "Débito realizado com sucesso."}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
