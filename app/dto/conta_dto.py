@@ -22,7 +22,7 @@ class TransferirDTO(BaseModel):
     valor: Decimal
 
 
-class CreditarDebitarDTO(BaseModel):
+class SacarDepositarDTO(BaseModel):
     numero: str
     valor: Decimal
 
