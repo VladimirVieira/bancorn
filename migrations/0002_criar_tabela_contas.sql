@@ -6,5 +6,5 @@ CREATE TABLE contas (
     saldo NUMERIC(15, 2) DEFAULT 0.00 NOT NULL,
     tipo tipo_conta DEFAULT 'corrente' NOT NULL,
     pontos INTEGER DEFAULT 0 NOT NULL CHECK (pontos >= 0),
-    agencia_id UUID NOT NULL REFERENCES agencia_bancaria(id),
+    agencia_id UUID NOT NULL REFERENCES agencias(id)
 );
