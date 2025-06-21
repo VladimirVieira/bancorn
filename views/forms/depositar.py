@@ -1,10 +1,11 @@
-from textual.screen import Screen
 from textual.app import ComposeResult
-from textual.widgets import Header, Footer, Button, Static, Input
 from textual.containers import Vertical
 from textual.events import Ready
+from textual.screen import Screen
+from textual.widgets import Button, Footer, Header, Input, Static
 
 from views.componentes.input_dinheiro import DinheiroInput
+
 
 class TelaDepositar(Screen):
     def compose(self) -> ComposeResult:

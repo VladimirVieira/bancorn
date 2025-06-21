@@ -29,4 +29,8 @@ class ContaBonus(Conta):
         self._pontuacao += int(valor // self.VALOR_PARA_PONTOS_TRANSFERENCIA_RECEBIDA)
 
     def __str__(self) -> str:
-        return f"Conta Bônus {self.numero} - Saldo: {self.formatar_saldo(self._saldo)} - Pontuação: {self._pontuacao}"
+        return (
+            f"Conta Bônus {self.numero} - "
+            f"Saldo: {self.formatar_saldo(self._saldo)} - "
+            f"Pontuação: {self._pontuacao}"
+        )

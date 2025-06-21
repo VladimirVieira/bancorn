@@ -1,14 +1,14 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 import psycopg2
-from psycopg2.extensions import connection as PGConnection
 from dotenv import load_dotenv
+from psycopg2.extensions import connection
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
 
 class ConfiguracoesPostgres(BaseSettings):
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"  # noqa: S105
     POSTGRES_DB: str = "bancorn"
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
@@ -24,7 +24,7 @@ class ConfiguracoesPostgres(BaseSettings):
             f"host={self.POSTGRES_HOST} "
             f"port={self.POSTGRES_PORT}"
         )
-    
+
     def sqlalchemy_url(self) -> str:
         return (
             f"postgresql+psycopg2://{self.POSTGRES_USER}:"
@@ -36,9 +36,5 @@ class ConfiguracoesPostgres(BaseSettings):
 configuracoes_postgres = ConfiguracoesPostgres()
 
 
-def obter_conexao_banco() -> PGConnection:
-    try:
-        return psycopg2.connect(configuracoes_postgres.dsn)
-    except psycopg2.OperationalError as e:
-        print("Erro ao conectar ao banco de dados:", e)
-        raise
+def obter_conexao_banco() -> connection:
+    return psycopg2.connect(configuracoes_postgres.dsn)

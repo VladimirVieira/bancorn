@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from domain.conta import Conta, TipoOperacao
 from domain.conta_bonus import ContaBonus
 from domain.conta_poupanca import ContaPoupanca
@@ -8,8 +10,10 @@ from dto.conta_dto import (
     TipoConta,
     TransferirDTO,
 )
-from repository.conta_repository_interface import ContaRepositoryInterface
-from repository.operacao_repository_interface import OperacaoRepositoryInterface
+
+if TYPE_CHECKING:
+    from repository.conta_repository_interface import ContaRepositoryInterface
+    from repository.operacao_repository_interface import OperacaoRepositoryInterface
 
 
 class ContaService:
@@ -17,7 +21,7 @@ class ContaService:
         self,
         conta_repo: "ContaRepositoryInterface",
         operacao_repo: "OperacaoRepositoryInterface",
-    ):
+    ) -> None:
         self.conta_repo = conta_repo
         self.operacao_repo = operacao_repo
 
@@ -42,7 +46,10 @@ class ContaService:
         conta.depositar(dados.valor)
         self.conta_repo.persistir_conta(conta)
         self.operacao_repo.cadastrar_operacao(
-            conta, None, dados.valor, TipoOperacao.DEPOSITO
+            conta,
+            None,
+            dados.valor,
+            TipoOperacao.DEPOSITO,
         )
 
     def sacar(self, numero: str, dados: SacarDepositarDTO) -> None:
@@ -51,7 +58,10 @@ class ContaService:
 
         self.conta_repo.persistir_conta(conta)
         self.operacao_repo.cadastrar_operacao(
-            conta, None, dados.valor, TipoOperacao.SAQUE
+            conta,
+            None,
+            dados.valor,
+            TipoOperacao.SAQUE,
         )
 
     def transferir(self, dados: TransferirDTO) -> None:
@@ -62,7 +72,10 @@ class ContaService:
         self.conta_repo.persistir_conta(origem)
         self.conta_repo.persistir_conta(destino)
         self.operacao_repo.cadastrar_operacao(
-            origem, destino, dados.valor, TipoOperacao.TRANSFERENCIA
+            origem,
+            destino,
+            dados.valor,
+            TipoOperacao.TRANSFERENCIA,
         )
 
     def render_juros(self, numero: str, dados: RenderJurosDTO) -> None:

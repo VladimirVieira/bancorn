@@ -4,8 +4,8 @@ from fastapi import APIRouter, HTTPException
 
 from dto.conta_dto import (
     CadastrarContaDTO,
-    SacarDepositarDTO,
     RenderJurosDTO,
+    SacarDepositarDTO,
     TransferirDTO,
 )
 from repository.conta_repository import ContaRepository
@@ -14,7 +14,7 @@ from service.conta_service import ContaService
 
 router = APIRouter()
 conta_service = ContaService(
-    conta_repo=ContaRepository(), operacao_repo=OperacaoRepository()
+    conta_repo=ContaRepository(), operacao_repo=OperacaoRepository(),
 )
 
 
@@ -30,8 +30,7 @@ def cadastrar_conta(dados: CadastrarContaDTO) -> dict[str, str]:
 @router.get("/banco/conta")
 def consultar_contas() -> list[str]:
     try:
-        contas = conta_service.listar_numeros_contas()
-        return contas
+        return conta_service.listar_numeros_contas()
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -40,7 +39,7 @@ def consultar_contas() -> list[str]:
 def consultar_saldo(numero: str) -> dict[str, Decimal]:
     try:
         conta = conta_service.consultar_conta(numero)
-        return {"saldo": conta._saldo}
+        return {"saldo": conta.obter_saldo()}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

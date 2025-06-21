@@ -4,7 +4,6 @@ from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Static
 
 from views.forms.acessar_conta import AcessarConta
-
 from views.forms.cadastrar_conta import CadastrarConta
 
 

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from domain.conta import Conta
+
 
 class ContaRepositoryInterface(ABC):
     @abstractmethod

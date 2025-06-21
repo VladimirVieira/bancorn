@@ -9,7 +9,7 @@ class FakeOperacaoRepository(OperacaoRepositoryInterface):
         self._operacoes: list[Operacao] = []
 
     def cadastrar_operacao(
-        self, origem: Conta, destino: Conta | None, valor: Decimal, tipo: TipoOperacao
+        self, origem: Conta, destino: Conta | None, valor: Decimal, tipo: TipoOperacao,
     ) -> None:
         operacao = Operacao(
             tipo=tipo,

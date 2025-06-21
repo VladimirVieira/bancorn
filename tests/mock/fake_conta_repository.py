@@ -1,6 +1,7 @@
 from domain.conta import Conta
 from repository.conta_repository_interface import ContaRepositoryInterface
 
+
 class FakeContaRepository(ContaRepositoryInterface):
     def __init__(self):
         self._contas: list[Conta] = []

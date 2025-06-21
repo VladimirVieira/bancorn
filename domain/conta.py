@@ -3,9 +3,9 @@ from decimal import Decimal
 from enum import StrEnum
 
 from domain.excecoes import (
-    SaldoInicialInvalido,
-    SaldoInsuficiente,
-    ValorOperacaoInvalido,
+    SaldoInicialInvalidoError,
+    SaldoInsuficienteError,
+    ValorOperacaoInvalidoError,
 )
 
 
@@ -30,7 +30,7 @@ class Conta:
 
     def __init__(self, numero: str, saldo_inicial: Decimal) -> None:
         if saldo_inicial < 0:
-            raise SaldoInicialInvalido()
+            raise SaldoInicialInvalidoError
 
         self.numero = numero
         self._saldo = saldo_inicial
@@ -40,30 +40,30 @@ class Conta:
 
     def depositar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+            raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
         self._saldo += valor
 
     def transferir(self, valor: Decimal, conta: "Conta") -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+            raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
         self.debitar(valor)
         conta.receber_transferencia(valor)
 
     def receber_transferencia(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+            raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
         self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+            raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
         if self._saldo - valor < self.SALDO_MINIMO:
-            raise SaldoInsuficiente()
+            raise SaldoInsuficienteError
         self._saldo -= valor
 
     def creditar(self, valor: Decimal) -> None:
         if valor <= 0:
-            raise ValorOperacaoInvalido("O valor deve ser maior que zero.")
+            raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
         self._saldo += valor
 
     @staticmethod

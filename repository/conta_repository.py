@@ -22,55 +22,51 @@ def obter_tipo_conta(conta: Conta) -> str:
 
 class ContaRepository(ContaRepositoryInterface):
     def criar_conta(self, conta: Conta) -> None:
-        with obter_conexao_banco() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    """
+        with obter_conexao_banco() as conn, conn.cursor() as cursor:
+            cursor.execute(
+                """
                     INSERT INTO contas (numero, saldo, tipo, pontos, agencia_id)
                     VALUES (%s, %s, %s, %s, %s)
                     """,
-                    (
-                        conta.numero,
-                        conta._saldo,
-                        obter_tipo_conta(conta),
-                        getattr(conta, "_pontuacao", 0),
-                        None,
-                    ),
-                )
+                (
+                    conta.numero,
+                    conta.obter_saldo(),
+                    obter_tipo_conta(conta),
+                    getattr(conta, "_pontuacao", 0),
+                    None,
+                ),
+            )
 
     def persistir_conta(self, conta: Conta) -> None:
-        with obter_conexao_banco() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    """
+        with obter_conexao_banco() as conn, conn.cursor() as cursor:
+            cursor.execute(
+                """
                     UPDATE contas
                     SET saldo = %s, tipo = %s, pontos = %s
                     WHERE numero = %s
                     """,
-                    (
-                        conta._saldo,
-                        obter_tipo_conta(conta),
-                        getattr(conta, "_pontuacao", 0),
-                        conta.numero,
-                    ),
-                )
+                (
+                    conta.obter_saldo(),
+                    obter_tipo_conta(conta),
+                    getattr(conta, "_pontuacao", 0),
+                    conta.numero,
+                ),
+            )
 
     def listar_contas(self) -> list[str]:
-        with obter_conexao_banco() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT numero pontos FROM contas")
-                numeros_conta: list[tuple[str]] = cursor.fetchall()
+        with obter_conexao_banco() as conn, conn.cursor() as cursor:
+            cursor.execute("SELECT numero pontos FROM contas")
+            numeros_conta: list[tuple[str]] = cursor.fetchall()
 
         return [conta[0] for conta in numeros_conta]
 
     def obter_conta(self, numero: str) -> Conta:
-        with obter_conexao_banco() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    "SELECT numero, saldo, tipo, pontos FROM contas WHERE numero = %s",
-                    (numero,),
-                )
-                result = cursor.fetchone()
+        with obter_conexao_banco() as conn, conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT numero, saldo, tipo, pontos FROM contas WHERE numero = %s",
+                (numero,),
+            )
+            result = cursor.fetchone()
 
         if not result:
             raise ValueError(f"Conta com número {numero} não encontrada.")
@@ -88,7 +84,7 @@ class ContaRepository(ContaRepositoryInterface):
                 return ContaPoupanca(numero, saldo)
             case "bonus":
                 conta = ContaBonus(numero)
-                conta._pontuacao = pontos
+                conta._pontuacao = pontos  # noqa: SLF001
                 return conta
             case _:
                 return Conta(numero, saldo)

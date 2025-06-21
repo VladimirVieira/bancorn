@@ -1,21 +1,20 @@
 from decimal import Decimal
-from typing import List
 
 from domain.conta import Conta
 from domain.conta_poupanca import ContaPoupanca
-from domain.excecoes import ContaJaExiste, ContaNaoEncontrada
+from domain.excecoes import ContaJaExisteError, ContaNaoEncontradaError
 
 
 class AgenciaBancaria:
     def __init__(self) -> None:
-        self.contas: List[Conta] = []
+        self.contas: list[Conta] = []
 
     def verificar_conta(self, numero: str) -> None:
         if any(c.numero == numero for c in self.contas):
-            raise ContaJaExiste()
+            raise ContaJaExisteError
 
     def criar_conta_poupanca(
-        self, numero: str, saldo_inicial: Decimal
+        self, numero: str, saldo_inicial: Decimal,
     ) -> ContaPoupanca:
         self.verificar_conta(numero)
         nova_conta = ContaPoupanca(numero, saldo_inicial)
@@ -33,7 +32,7 @@ class AgenciaBancaria:
         for conta in self.contas:
             if conta.numero == numero:
                 return conta
-        raise ContaNaoEncontrada()
+        raise ContaNaoEncontradaError
 
     def consultar_saldo(self, numero: str) -> str:
         conta = self.buscar_conta(numero)
@@ -48,7 +47,7 @@ class AgenciaBancaria:
         conta.debitar(valor)
 
     def transferir(
-        self, origem_numero: str, destino_numero: str, valor: Decimal
+        self, origem_numero: str, destino_numero: str, valor: Decimal,
     ) -> None:
         conta_origem = self.buscar_conta(origem_numero)
         conta_destino = self.buscar_conta(destino_numero)

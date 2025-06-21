@@ -5,6 +5,7 @@ from textual.widgets import Button, Footer, Header, Input, Select, Static
 
 from views.componentes.input_dinheiro import DinheiroInput
 
+
 class CadastrarConta(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
