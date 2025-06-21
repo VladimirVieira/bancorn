@@ -20,6 +20,7 @@ fastapi = "^0.115.13"
 pytest = "^8.4.1"
 mypy = "^1.16.1"
 types-psycopg2 = "^2.9.21.20250516"
+ruff = "^0.12.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -32,3 +33,21 @@ show_error_codes = true
 warn_unused_ignores = true
 warn_unreachable = true
 exclude = '^(tests|views)/'
+
+[tool.ruff]
+src = ["."]
+target-version = "py313"
+exclude=["views", "tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "D",
+  "TRY003",
+  "TRY300",
+  "EM101",
+  "BLE001",
+  "B904",
+  "UP040",
+  "EM102",
+]
