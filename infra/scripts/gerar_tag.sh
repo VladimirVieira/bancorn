@@ -4,7 +4,8 @@ set -e
 LAST_TAG=$(git tag --list 'rc[0-9]*' | sort -V | tail -n 1)
 
 if [ -z "$LAST_TAG" ]; then
-    LAST_TAG="rc0.0.0"
+    echo "rc0.1.0"
+    exit 0
 fi
 
 COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s%n%b")
