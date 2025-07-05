@@ -27,7 +27,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
       - name: Instalar Poetry
         run: |
@@ -46,13 +46,37 @@ jobs:
       - name: Testes com Pytest
         run: poetry run pytest
 
-      - name: Criar tag build com timestamp
+      - name: Criar tag de release candidate
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
-          TIMESTAMP=$(date -u +'%Y%m%d%H%M%S')
-          TAG="build-${TIMESTAMP}"
+          chmod +x ./infra/scripts/gerar_tag.sh
+          NEW_TAG=$(./infra/scripts/gerar_tag.sh)
+
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git tag "$TAG"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VladimirVieira/bancorn.git
-          git push origin "$TAG"
+
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"
+
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Gerar ZIP do projeto com a tag gerada
+        if: github.event_name == 'push'
+        run: |
+          if [ -n "$NEW_TAG" ]; then
+            ZIP_NAME="${NEW_TAG}.zip"
+            echo "Gerando arquivo: $ZIP_NAME"
+            git archive --format=zip --output="$ZIP_NAME" HEAD
+            echo "Arquivo $ZIP_NAME gerado com sucesso."
+          else
+            echo "Nenhuma tag foi gerada nesta execução. Pulando geração do ZIP."
+          fi
+
+      - name: Upload dos artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-zip
+          path: |
+            *.zip
+          if-no-files-found: ignore
