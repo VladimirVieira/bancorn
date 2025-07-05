@@ -63,22 +63,17 @@ jobs:
 
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
-      - name: Gerar ZIP do projeto com a tag gerada
-        if: github.event_name == 'push'
+      - name: Criar nome para artefato
         run: |
-          if [ -n "$NEW_TAG" ]; then
-            ZIP_NAME="${NEW_TAG}.zip"
-            echo "Gerando arquivo: $ZIP_NAME"
-            git archive --format=zip --output="$ZIP_NAME" HEAD
-            echo "Arquivo $ZIP_NAME gerado com sucesso."
-          else
-            echo "Nenhuma tag foi gerada nesta execução. Pulando geração do ZIP."
+          if [ -z "$NEW_TAG" ]; then
+            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+            NEW_TAG="build-$TIMESTAMP"
+            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
           fi
 
       - name: Upload dos artefatos
         uses: actions/upload-artifact@v4
         with:
-          name: build-zip
+          name: ${{ env.NEW_TAG }}
           path: |
-            *.zip
-          if-no-files-found: ignore
+            ./*
