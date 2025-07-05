@@ -1,0 +1,84 @@
+name: CI - Staging Pipeline
+
+on:
+  push:
+    branches: 
+      - staging
+  pull_request:
+    branches:
+      - staging
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-tag-package:
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONUNBUFFERED: 1
+      POETRY_VIRTUALENVS_CREATE: false
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Instalar Poetry
+        run: |
+          pip install poetry==1.8.4
+          poetry config virtualenvs.create false
+
+      - name: Instalar dependências
+        run: poetry install --with dev
+
+      - name: Análise com Ruff
+        run: poetry run ruff check .
+
+      - name: Análise com MyPy
+        run: poetry run mypy .
+
+      - name: Testes com Pytest
+        run: poetry run pytest
+
+      - name: Gerar tag rc
+        id: tag_step
+        run: |
+          git fetch --tags
+          LAST_RC=$(git tag --list "rc-*" | sort -V | tail -n1)
+          if [ -z "$LAST_RC" ]; then
+            NEXT_TAG="rc-1.0"
+          else
+            MAJOR=$(echo $LAST_RC | cut -d'-' -f2 | cut -d'.' -f1)
+            MINOR=$(echo $LAST_RC | cut -d'-' -f2 | cut -d'.' -f2)
+            NEXT_TAG="rc-${MAJOR}.$((MINOR+1))"
+          fi
+          echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_ENV
+          echo "::set-output name=tag::$NEXT_TAG"
+
+      - name: Criar Tag 
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $NEXT_TAG
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VladimirVieira/bancorn.git
+          git push origin $NEXT_TAG
+
+      - name: Criar pacote zip
+        run: |
+          mkdir pacote
+          cp -r controller domain dto repository service use_cases views config app.py migrations pacote/
+          zip -r ${{ env.NEXT_TAG }}.zip pacote
+
+      - name: Upload do pacote como Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.NEXT_TAG }}.zip
+          path: ${{ env.NEXT_TAG }}.zip
+
