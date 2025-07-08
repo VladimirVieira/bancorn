@@ -1,18 +1,15 @@
-name: CI - Dev Pipeline
+name: Criar Tag e Enviar Artefatos
 
 on:
-  push:
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
-
-permissions:
-  contents: write
+  workflow_call:
+    inputs:
+      CAMINHO_SCRIPT_TAG:
+        description: 'Caminho do script shell para gerar tag RC'
+        required: true
+        type: string
 
 jobs:
-  build-test:
+  criar-tag-e-artefatos:
     runs-on: ubuntu-latest
 
     env:
@@ -21,38 +18,16 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout código
+      - name: Checkout do código
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Instalar Poetry
-        run: |
-          pip install poetry==1.8.4
-          poetry config virtualenvs.create false
-
-      - name: Instalar dependências com Poetry
-        run: poetry install --with dev
-
-      - name: Análise com Ruff
-        run: poetry run ruff check .
-
-      - name: Análise com MyPy
-        run: poetry run mypy .
-
-      - name: Testes com Pytest
-        run: poetry run pytest
-
       - name: Criar tag de release candidate
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
-          chmod +x ./infra/scripts/gerar_tag.sh
-          NEW_TAG=$(./infra/scripts/gerar_tag.sh)
+          chmod +x ./${{ inputs.CAMINHO_SCRIPT_TAG }}
+          NEW_TAG=$(.${{ inputs.CAMINHO_SCRIPT_TAG }})
 
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -63,7 +38,7 @@ jobs:
 
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
-      - name: Criar nome para artefato
+      - name: Criar nome para artefato (fallback)
         run: |
           if [ -z "$NEW_TAG" ]; then
             TIMESTAMP=$(date +'%Y%m%d%H%M%S')

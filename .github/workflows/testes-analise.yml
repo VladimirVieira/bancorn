@@ -1,0 +1,43 @@
+name: Testes e Análise Estática
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+
+jobs:
+  testes-analise:
+    name: Testes e Análise Estática
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONUNBUFFERED: 1
+      POETRY_VIRTUALENVS_CREATE: false
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Instalar Poetry
+        run: |
+          pip install poetry==1.8.4
+          poetry config virtualenvs.create false
+
+      - name: Instalar dependências com Poetry
+        run: poetry install --with dev
+
+      - name: Análise com Ruff
+        run: poetry run ruff check .
+
+      - name: Análise com MyPy
+        run: poetry run mypy .
+
+      - name: Testes com Pytest
+        run: poetry run pytest
