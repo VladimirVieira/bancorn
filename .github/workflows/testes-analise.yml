@@ -2,10 +2,6 @@ name: Testes e Análise Estática
 
 on:
   workflow_call:
-    inputs:
-      python-version:
-        required: true
-        type: string
 
 jobs:
   testes-analise:
@@ -23,7 +19,7 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: '3.13'
 
       - name: Instalar Poetry
         run: |

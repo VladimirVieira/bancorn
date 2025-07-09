@@ -24,7 +24,6 @@ jobs:
           fetch-depth: 0
 
       - name: Criar tag de release candidate
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
           chmod +x ./${{ inputs.CAMINHO_SCRIPT_TAG }}
           NEW_TAG=$(.${{ inputs.CAMINHO_SCRIPT_TAG }})

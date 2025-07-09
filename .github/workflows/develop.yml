@@ -14,11 +14,10 @@ permissions:
 jobs:
   testes-analise:
     uses: ./.github/workflows/testes-analise.yml
-    with:
-      python-version: '3.13'
 
   criar-tag-artefatos:
     needs: testes-analise
     uses: ./.github/workflows/criar-tag-artefatos.yml
+    if: github.event_name == 'push'
     with:
       CAMINHO_SCRIPT_TAG: infra/scripts/gerar_tag_rc.sh
