@@ -26,3 +26,5 @@ jobs:
     needs: criar-tag-artefatos
     uses: ./.github/workflows/docker-build-push.yml
     if: github.event_name == 'push'
+    secrets:
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}

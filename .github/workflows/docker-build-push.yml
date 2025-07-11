@@ -2,13 +2,14 @@ name: Buildar imagem docker e publicar
 
 on:
   workflow_call:
+    secrets:
+      DOCKER_HUB_TOKEN:
+        required: true
 
 jobs:
   build-push-docker:
     name: Buildar e Publicar Imagem Docker
     runs-on: ubuntu-latest
-    env:
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -18,6 +19,8 @@ jobs:
           docker build . -t pablo1gustavo/ufrn:latest
 
       - name: Publicar imagem no Docker Hub
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
-          echo "${DOCKER_HUB_TOKEN}" | docker login --username pablo1gustavo --password-stdin
+          echo "$DOCKER_HUB_TOKEN" | docker login --username pablo1gustavo --password-stdin
           docker push pablo1gustavo/ufrn:latest
