@@ -1,0 +1,28 @@
+name: CI - Production Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  testes-analise:
+    uses: ./.github/workflows/testes-analise.yml
+
+  criar-tag-artefatos:
+    needs: testes-analise
+    uses: ./.github/workflows/tag-artefatos.yml
+    if: github.event_name == 'push'
+    with:
+      CAMINHO_SCRIPT_TAG: infra/scripts/gerar_tag_rel.sh
+  
+  docker-build-push:
+    needs: criar-tag-artefatos
+    uses: ./.github/workflows/docker-build-push.yml
+    if: github.event_name == 'push'
