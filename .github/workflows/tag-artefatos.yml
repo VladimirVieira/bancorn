@@ -32,10 +32,13 @@ jobs:
           git config user.email "github-actions@github.com"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VladimirVieira/bancorn.git
 
-          git tag "$NEW_TAG"
-          git push origin "$NEW_TAG"
-
-          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          if git ls-remote --tags origin | grep -qw "refs/tags/$NEW_TAG"; then
+            echo "A tag '$NEW_TAG' já existe. Ignorando criação."
+          else
+            git tag "$NEW_TAG"
+            git push origin "$NEW_TAG"
+            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          fi
 
       - name: Criar nome para artefato (fallback)
         run: |
