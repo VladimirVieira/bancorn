@@ -1,0 +1,21 @@
+name: Buildar imagem docker e publicar
+
+on:
+  workflow_call:
+
+jobs:
+  build-push-docker:
+    name: Buildar e Publicar Imagem Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Build da imagem
+        run: |
+          docker build . -t pablo1gustavo/ufrn:latest
+
+      - name: Publicar imagem no Docker Hub
+        run: |
+          docker login -u pablo1gustavo -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push pablo1gustavo/ufrn:latest
