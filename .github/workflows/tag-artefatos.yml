@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       CAMINHO_SCRIPT_TAG:
-        description: 'Caminho do script shell para gerar tag RC'
+        description: 'Caminho do script shell para gerar a tag'
         required: true
         type: string
 
@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Criar tag de release candidate
+      - name: Criar nova tag
         run: |
           chmod +x ./${{ inputs.CAMINHO_SCRIPT_TAG }}
           NEW_TAG=$(.${{ inputs.CAMINHO_SCRIPT_TAG }})
