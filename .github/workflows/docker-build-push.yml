@@ -17,5 +17,5 @@ jobs:
 
       - name: Publicar imagem no Docker Hub
         run: |
-          docker login -u pablo1gustavo -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login --username pablo1gustavo --password-stdin
           docker push pablo1gustavo/ufrn:latest
