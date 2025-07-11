@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/tag-artefatos.yml
     if: github.event_name == 'push'
     with:
-      CAMINHO_SCRIPT_TAG: infra/scripts/gerar_tag_rel.sh
+      CAMINHO_SCRIPT_TAG: ./infra/scripts/gerar_tag_rel.sh
   
   docker-build-push:
     needs: criar-tag-artefatos
