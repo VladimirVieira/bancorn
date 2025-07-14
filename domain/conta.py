@@ -41,7 +41,7 @@ class Conta:
     def depositar(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
-        self._saldo += valor        
+        self._saldo += valor
 
     def transferir(self, valor: Decimal, conta: "Conta") -> None:
         if valor <= 0:
