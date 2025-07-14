@@ -52,7 +52,6 @@ class Conta:
     def receber_transferencia(self, valor: Decimal) -> None:
         if valor <= 0:
             raise ValorOperacaoInvalidoError("O valor deve ser maior que zero.")
-        self._saldo += valor
 
     def debitar(self, valor: Decimal) -> None:
         if valor <= 0:
