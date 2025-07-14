@@ -4,7 +4,7 @@ from domain.conta import Conta
 
 
 class ContaBonus(Conta):
-    SALDO_MINIMO = -Decimal("2000.00") #
+    SALDO_MINIMO = -Decimal("2000.00") 
     VALOR_PARA_PONTOS_DEPOSITO = 100
     VALOR_PARA_PONTOS_TRANSFERENCIA_ENVIADA = 200
     VALOR_PARA_PONTOS_TRANSFERENCIA_RECEBIDA = 150
