@@ -81,4 +81,4 @@ def render_juros(numero: str, dados: RenderJurosDTO) -> dict[str, str]:
         raise HTTPException(status_code=400, detail=str(e))
 
 def erro_sintaxe():
-    print("Erro proposital"
+    print("Erro proposital")
