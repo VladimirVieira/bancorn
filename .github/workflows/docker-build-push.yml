@@ -2,6 +2,9 @@ name: Buildar imagem docker e publicar
 
 on:
   workflow_call:
+    secrets:
+      DOCKER_HUB_TOKEN:
+        required: true
 
 jobs:
   build-push-docker:
@@ -16,6 +19,8 @@ jobs:
           docker build . -t pablo1gustavo/ufrn:latest
 
       - name: Publicar imagem no Docker Hub
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
-          docker login -u pablo1gustavo -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          echo "$DOCKER_HUB_TOKEN" | docker login --username pablo1gustavo --password-stdin
           docker push pablo1gustavo/ufrn:latest
