@@ -6,7 +6,7 @@ authors = ["Pablo Gustavo Fernandes Maia <pablo1gustavo.dev@gmail.com>", "Vladim
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = ">=3.10,<4.0"
 textual-dev = "^1.7.0"
 psycopg2 = "^2.9.10"
 python-dotenv = "^1.1.0"
