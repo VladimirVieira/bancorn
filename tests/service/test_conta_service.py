@@ -217,7 +217,7 @@ def test_sacar_valor_com_saldo_menor_que_o_minimo_em_conta_bonus_com_erro(
         numero="123456789022", saldo_inicial=Decimal("50.00"), tipo=TipoConta.BONUS,
     )
     conta_service.cadastrar_conta(dados)
-    debito_dto = SacarDepositarDTO(valor=Decimal("1100.00"))
+    debito_dto = SacarDepositarDTO(valor=Decimal("2100.00"))
 
     with pytest.raises(SaldoInsuficienteError):
         conta_service.sacar("123456789022", dados=debito_dto)
