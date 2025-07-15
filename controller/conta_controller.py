@@ -79,3 +79,7 @@ def render_juros(numero: str, dados: RenderJurosDTO) -> dict[str, str]:
         return {"message": "Rendimento aplicado com sucesso."}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+def erro_sintaxe() -> None:
+    return None

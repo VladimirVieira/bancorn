@@ -35,5 +35,10 @@ jobs:
       - name: Análise com MyPy
         run: poetry run mypy .
 
+      - name: Verificação de Sintaxe (py_compile)                  #
+        run: |
+          echo "Verificando erros de sintaxe com py_compile..."
+          python -m py_compile $(find . -name "*.py")              
+          
       - name: Testes com Pytest
         run: poetry run pytest
